@@ -9,7 +9,6 @@ from aiogram.types import Message
 TOKEN = os.getenv("TOKEN")  # <-- токен из переменной окружения
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)  # Вот здесь связали диспетчер с ботом
 
 @dp.message(Command("start"))
 async def start_handler(message: Message):
