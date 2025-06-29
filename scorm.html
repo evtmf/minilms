@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini LMS</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #222222);
+    }
+    
+    #lesson-list {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .lesson-btn {
+      padding: 14px;
+      background: var(--tg-theme-button-color, #2ea6ff);
+      color: var(--tg-theme-button-text-color, #ffffff);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      text-align: left;
+    }
+    
+    #lesson-container {
+      display: none;
+      height: 80vh;
+      position: relative;
+    }
+    
+    #lesson-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+    
+    #back-btn {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: none;
+      border: none;
+      color: var(--tg-theme-link-color, #2ea6ff);
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>Выберите урок:</h2>
+    <div id="lesson-list"></div>
+    
+    <div id="lesson-container">
+      <button id="back-btn">← Назад</button>
+      <iframe id="lesson-frame"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const lessons = [
+      { id: "lesson1", title: "Мессенджер" },
+      { id: "lesson2", title: "Почта" }
+    ];
+
+    const lessonList = document.getElementById('lesson-list');
+    const lessonContainer = document.getElementById('lesson-container');
+    const lessonFrame = document.getElementById('lesson-frame');
+    const backBtn = document.getElementById('back-btn');
+
+    // Рендерим список уроков
+    function renderLessons() {
+      lessonList.innerHTML = '';
+      lessons.forEach(lesson => {
+        const btn = document.createElement('button');
+        btn.className = 'lesson-btn';
+        btn.textContent = lesson.title;
+        btn.onclick = () => openLesson(lesson.id);
+        lessonList.appendChild(btn);
+      });
+    }
+
+    // Открываем урок
+    function openLesson(lessonId) {
+      lessonFrame.src = `scorms/${lessonId}/story.html`;
+      lessonList.style.display = 'none';
+      lessonContainer.style.display = 'block';
+      
+      // Для Telegram WebApp растягиваем на весь экран
+      if (window.Telegram?.WebApp) {
+        Telegram.WebApp.expand();
+      }
+    }
+
+    // Возврат к списку
+    backBtn.onclick = () => {
+      lessonFrame.src = '';
+      lessonContainer.style.display = 'none';
+      lessonList.style.display = 'grid';
+    };
+
+    // Инициализация
+    renderLessons();
+
+    // Интеграция с Telegram
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.setHeaderColor('#2ea6ff');
+      Telegram.WebApp.setBackgroundColor('#f3f2f8');
+    }
+  </script>
+</body>
+</html>
